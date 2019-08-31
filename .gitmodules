@@ -1,0 +1,3 @@
+[submodule "submods/cs_string"]
+	path = submods/cs_string
+	url = git@github.com:copperspice/cs_string.git
