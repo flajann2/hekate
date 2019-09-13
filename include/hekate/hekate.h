@@ -36,8 +36,12 @@ namespace hekate {
   class cli;
   class cmd;
 
+  using description_t = std::string;
   using main_args_t = std::vector<std::string>;
   using main_args_iterator_t = main_args_t::const_iterator;
+
+  using optional_args_t = std::vector<std::string>;
+  using optional_list_t = std::vector<std::string>;
 
   using nested_f = std::function<void(cmd &)>;
   using command_f = std::function<void(cmd &)>;
@@ -75,6 +79,8 @@ namespace hekate {
    */
   class base {
   protected:
+    description_t m_description;
+
     /// does its parsing and returns the new position of the iterator.
     virtual main_args_iterator_t parse(main_args_iterator_t it,
                                        main_args_iterator_t it_end){};
@@ -90,8 +96,21 @@ namespace hekate {
 
   /// Optional
   template <type T, qual Q = qual::optional> class opt : public base {
+    optional_list_t m_alternatives;
+
   public:
-    template <typename... Args> opt(const Args &... args) {}
+    template <typename... Args> opt(const Args &... args) {
+      optional_args_t oargs = {args...};
+      for (const auto &oa : oargs) {
+        if (is_flag(oa)) {
+          m_alternatives.push_back(oa);
+        } else { // assume description!
+          // TODO: Note we don't currently fail multiple descriptions, if given. WE SHOULD!
+          // TODO: or at least concatenate them.
+          m_description = oa;
+        }
+      }
+    }
 
     type get_type() { return T; }
     qual get_qual() { return Q; }
@@ -102,21 +121,20 @@ namespace hekate {
   /// Parameter
   template <type T, int min = 0, int max = std::numeric_limits<int>::max()>
   class param : public base {
-    std::string description_;
-
   public:
-    explicit param(const std::string &description)
-        : description_(description) {}
+    explicit param(const description_t &description) {
+      m_description = description;
+    }
     void operator()(cmd &cmd, std::string tok) {}
 
     type get_type() { return T; }
     int get_min() { return min; }
     int get_max() { return max; }
-
   };
 
   /**
-   * Base class for cmd like cmd and cli.
+   * cmd marks a new (sub)command. The top-level command is "nameless"
+   * and thusly cli (derived later).
    */
   class cmd : public base {
 
@@ -136,8 +154,10 @@ namespace hekate {
   public:
     const std::string m_name;
 
-    cmd(const std::string &name, nested_f fcmd, command_f frun = nullptr)
+    cmd(const std::string &name, nested_f fcmd, command_f frun = nullptr,
+        description_t description = nullptr)
         : m_name(name), m_fcmd(fcmd), m_frun(frun) {
+      m_description = description;
       m_fcmd(*this);
     }
     cmd() : m_name("<cmd>") {}
@@ -161,7 +181,8 @@ namespace hekate {
       std::cout << "PARM: " << parameter << '\n';
     }
 
-    void parse_command(main_args_iterator_t &it, main_args_iterator_t &it_end) {
+    virtual void parse_command(main_args_iterator_t &it,
+                               main_args_iterator_t &it_end) {
       std::cout << "CMD: " << *it << '\n';
       auto local_it = it++;
       m_scmds[*local_it]->parse(it, it_end);
@@ -179,12 +200,14 @@ namespace hekate {
         if (is_flag(*it)) {
           parse_flag(*it);
           ++it;
+        } else if (is_command(*it)) {
+          parse_command(it, it_end);
         } else if (is_parameter(*it)) {
           parse_parameter(*it);
           ++it;
-        } else if (is_command(*it)) {
-          parse_command(it, it_end);
-        } else { // should never get here!
+        } else { // Failure to match anything in the CLI template!!!
+          // TODO: Add error handling in here! And a printout of
+          // TODO: the help.
           throw it;
         }
       }
