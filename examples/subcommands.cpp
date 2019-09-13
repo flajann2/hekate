@@ -9,13 +9,13 @@ int main(int argc, char **argv) {
   argline << opt<type::flag>("-a", "--all", "Newton's Inspiration")
           << opt<type::flag>("-b", "--beta_mode", "For testing")
           << opt<type::flag>("-f", "Force the situation")
-          << opt<type::numeric>("-n", "--count", "How many times to repeat")
+          << opt<type::integer>("-n", "--count", "How many times to repeat")
           << param<type::string, 0, 1>("Label to use")
 
           << cmd(
                  "walk",
                  [](auto &c) {
-                   c << opt<type::numeric>("--stride", "")
+                   c << opt<type::integer>("--stride", "")
                      << cmd("through", [](auto &c) {
                           c << opt<type::unitary>("--speed",
                                                   "Speed of movement")

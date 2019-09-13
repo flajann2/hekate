@@ -18,14 +18,28 @@ namespace hekate {
   /// For some parmeters, we need to denote
   /// an unbounded quantity.
   constexpr int unbounded = -1;
+  const std::string nullstr = "";
 
   /// opt types:
-  ///   base
-  ///   numeric
-  ///   string
+  ///   integer, integer_arr,
+  ///   floating, floating_arr,
+  ///   string, string_arr,
   ///   flag
   ///   unitary
-  enum class type { base, numeric, string, flag, unitary };
+  enum class type {
+    integer,
+    integer_arr,
+    floating,
+    floating_arr,
+    string,
+    string_arr,
+    flag,
+    unitary
+  };
+
+  using optional_variant_t =
+      std::variant<int, std::vector<int>, double, std::vector<double>,
+                   std::string, std::vector<std::string>, bool>;
 
   /// qualifiers:
   ///   required
@@ -97,6 +111,7 @@ namespace hekate {
   /// Optional
   template <type T, qual Q = qual::optional> class opt : public base {
     optional_list_t m_alternatives;
+    optional_variant_t m_value;
 
   public:
     template <typename... Args> opt(const Args &... args) {
@@ -105,7 +120,8 @@ namespace hekate {
         if (is_flag(oa)) {
           m_alternatives.push_back(oa);
         } else { // assume description!
-          // TODO: Note we don't currently fail multiple descriptions, if given. WE SHOULD!
+          // TODO: Note we don't currently fail multiple descriptions, if given.
+          // WE SHOULD!
           // TODO: or at least concatenate them.
           m_description = oa;
         }
@@ -115,6 +131,7 @@ namespace hekate {
     type get_type() { return T; }
     qual get_qual() { return Q; }
 
+    // visitor
     bool operator()(cmd &cmd, std::string tok) {}
   };
 
@@ -155,7 +172,7 @@ namespace hekate {
     const std::string m_name;
 
     cmd(const std::string &name, nested_f fcmd, command_f frun = nullptr,
-        description_t description = nullptr)
+        description_t description = nullstr)
         : m_name(name), m_fcmd(fcmd), m_frun(frun) {
       m_description = description;
       m_fcmd(*this);
