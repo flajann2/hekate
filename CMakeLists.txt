@@ -3,6 +3,10 @@ cmake_minimum_required(VERSION 3.10)
 # Project name and version
 project(hekate  LANGUAGES CXX)
 
+# C++ compiler flags
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 option(ENABLE_TESTS "Enable testing" OFF)
 option(ENABLE_EXAMPLES "Enable examples" ON)
 option(ENABLE_DOCS "Enable documentation" OFF)
@@ -22,10 +26,6 @@ include(GNUInstallDirs)
 
 # Add feature summary
 include(FeatureSummary)
-
-# C++ compiler flags
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
 

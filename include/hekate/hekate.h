@@ -52,6 +52,7 @@ namespace hekate {
 
   using description_t = std::string;
   using main_args_t = std::vector<std::string>;
+  using param_list_t = std::vector<std::string>;
   using main_args_iterator_t = main_args_t::const_iterator;
 
   using optional_args_t = std::vector<std::string>;
@@ -60,7 +61,7 @@ namespace hekate {
   using nested_f = std::function<void(cmd &)>;
   using command_f = std::function<void(cmd &)>;
 
-  /// Helper functions
+  // Helper functions
   std::string str_tolower(const std::string &s_) {
     std::string s = s_;
     std::transform(s.begin(), s.end(), s.begin(),
@@ -75,8 +76,7 @@ namespace hekate {
     return s;
   }
 
-  /// Syntax
-
+  // Syntax
   using key_t = std::string;
 
   // syntax_ is a designator for syntax type.
@@ -136,8 +136,11 @@ namespace hekate {
   };
 
   /// Parameter
+  /// 
   template <type T, int min = 0, int max = std::numeric_limits<int>::max()>
   class param : public base {
+    param_list_t m_params;
+    
   public:
     explicit param(const description_t &description) {
       m_description = description;

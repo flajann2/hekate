@@ -23,6 +23,7 @@
     - [[#journal][Journal]]
       - [[#2019-06-15----re-reading-my-code][2019-06-15 -- Re-reading my code]]
       - [[#2019-06-16----and-so-we-continue][2019-06-16 -- And so we continue]]
+      - [[#2019-09-14----ah-so-more-precious-time-to-work-on-this][2019-09-14 -- Ah, so more precious time to work on this!]]
 
 ** Synopsis
    *Hekate* provides all the features you expect in a
@@ -244,5 +245,26 @@ to expand)
      Made some progress on things -- so now all that remains is the
      parsing of the opts and params -- and then the documentation...
      but I'll be more than happy just to get the parsing completed.
+**** 2019-09-14 -- Ah, so more precious time to work on this!
+     I am truly hoping that Hekate will be the "killer" go-to library
+     for doing C++ command-line interfaces. There are already a few others
+     avalable, but I am not happy with them, and having seen how Ruby
+     handles this, I am inspired to attempt something similar here.
+
+     Ruby takes a more object-centric approach, but I am doing a more
+     declarative approach. This first cut is only partially based 
+     on templates, but at some point, I hope to do something that is 
+     completely template driven! Not sure what that would look like,
+     but not important at this point.
+
+     The syntax of the DSL will become set in concrete once this is 
+     properly released to the world, so it behooves me to spend the time
+     to get it correct.
+
+     We are also coming up on C++20, but will not focus on that just yet, 
+     as there are many shops that have not even migrated to C++14 yet!!! So, comma,
+     at the "slow" progress of movent in the C++ industry, I suspect this will
+     remain relevant for at least 5 years down the road, if not longer!!!
+
 
 

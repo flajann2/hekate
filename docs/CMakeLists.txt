@@ -2,10 +2,14 @@ find_package(Doxygen REQUIRED)
 
 # Prepare doxygen configuration file
 set(OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
-set(DOXYGEN_INPUT ${PROJECT_SOURCE_DIR})
+set(DOXYGEN_INPUT ${PROJECT_SOURCE_DIR}/include)
 set(DOXYGEN_EXAMPLE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/examples)
 set(DOXYGEN_PROJECT_NAME ${PROJECT_NAME})
 string(TIMESTAMP DATE "%Y-%m-%d")
+
+#set(DOXY_MAINPAGE ${CMAKE_CURRENT_SOURCE_DIR}/mainpage.md)
+set(DOXY_MAINPAGE mainpage.md)
+set(DOXY_OUTPUT_DIR ${PROJECT_SOURCE_DIR}/build/docs)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doxygen.cfg.in ${CMAKE_CURRENT_BINARY_DIR}/doxygen.cfg)
 
 # Where to place the generated doxygen documentation
