@@ -34,10 +34,13 @@ int main(int argc, char **argv) {
                             << param<type::string, 1>("Comments");
                         });
                  },
-                 [](auto &cob) { cout << "RUNNABLE for fly invoked" << endl; },
+                 [](auto &cob) {
+                   cout << "RUNNABLE for fly invoked" << endl;
+                 },
                  "When you are ready to fly, the world is your oyster!")
-
-          << [](auto &cob) { cout << "MAIN RUUNNABLE invoked" << endl; };
+          << [](auto &cob) {
+               cout << "MAIN RUUNNABLE invoked" << endl;
+             };
 
   // main_args_t a1{"-a", "-f", "walk", "--stride", "through", "--speed", "10"};
   // main_args_t a2{"-a", "-f", "fly", "--fast", "through", "--speed", "200"};
