@@ -36,11 +36,16 @@ namespace hekate {
     flag,
     unitary
   };
-
+  
+  /// Variant type for the optionals
   using optional_variant_t =
       std::variant<int, std::vector<int>, double, std::vector<double>,
                    std::string, std::vector<std::string>, bool>;
 
+  // Helper functions for the variants.
+  template<class... Ts> struct vhandlers : Ts... { using Ts::operator()...; };
+  template<class... Ts> vhandlers(Ts...) -> vhandlers<Ts...>;
+  
   /// qualifiers:
   ///   required
   ///   optional (the default)
@@ -116,12 +121,13 @@ namespace hekate {
   public:
     template <typename... Args> opt(const Args &... args) {
       optional_args_t oargs = {args...};
+      
       for (const auto &oa : oargs) {
         if (is_flag(oa)) {
           m_alternatives.push_back(oa);
         } else { // assume description!
           // TODO: Note we don't currently fail multiple descriptions, if given.
-          // WE SHOULD!
+          // TODO: WE SHOULD!
           // TODO: or at least concatenate them.
           m_description = oa;
         }
