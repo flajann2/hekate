@@ -138,7 +138,9 @@ namespace hekate {
     qual get_qual() { return Q; }
 
     // visitor
-    bool operator()(cmd &cmd, std::string tok) {}
+    bool operator()(cmd &cmd, std::string tok) {
+      std::cout << "** opt:" << tok;
+    }
   };
 
   /// Parameter
@@ -199,8 +201,9 @@ namespace hekate {
       return m_scmds.find(token) != m_scmds.end();
     }
 
-    virtual void parse_flag(std::string flag) {
-      std::cout << "FLAG: " << flag << '\n';
+    virtual void parse_opt(std::string flag) {
+      std::cout << "OPT: " << flag << '\n';
+      m_sopts
     }
 
     virtual void parse_parameter(std::string parameter) {
@@ -224,7 +227,7 @@ namespace hekate {
       m_visited = true;
       while (it != it_end) {
         if (is_flag(*it)) {
-          parse_flag(*it);
+          parse_opt(*it);
           ++it;
         } else if (is_command(*it)) {
           parse_command(it, it_end);

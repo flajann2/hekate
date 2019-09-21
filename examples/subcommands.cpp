@@ -10,6 +10,7 @@ int main(int argc, char **argv) {
           << opt<type::flag>("-b", "--beta_mode", "For testing")
           << opt<type::flag>("-f", "Force the situation")
           << opt<type::integer>("-n", "--count", "How many times to repeat")
+          << opt<type::string>("-s", "--string", "Just an ordinary string")
           << param<type::string, 0, 1>("Label to use")
 
           << cmd(
