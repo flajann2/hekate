@@ -73,10 +73,10 @@ to expand)
     They take on the following charastics:
     - -a            (single character)
     - --apple       (alternative word)
-    - -c blue       (option with a value)
-    - --color grey  (alternative version with value)
-    - --color=green (alternate way to do the alternative value
-    - --str="single string with spaces"
+    -- -c blue       (option with a value)
+    -- --color grey  (alternative version with value)
+    -- --color=green (alternate way to do the alternative value
+    -- --str="single string with spaces"
     
 **** type::base
 **** type::numeric
