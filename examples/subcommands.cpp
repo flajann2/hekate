@@ -1,4 +1,4 @@
-#include <hekate/hekate>
+#include <hekate>
 #include <iostream>
 
 using namespace hekate;
