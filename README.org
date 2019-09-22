@@ -2,7 +2,7 @@
   - [[#synopsis][Synopsis]]
     - [[#why-write-another-cli-parser][Why write another CLI parser?]]
   - [[#documentation][Documentation]]
-    - [[#option-types][Option Types]]
+    - [[#option-syntax--types][Option Syntax & Types]]
       - [[#typebase][type::base]]
       - [[#typenumeric][type::numeric]]
       - [[#typestring][type::string]]
@@ -68,7 +68,7 @@ The major CLI parsers for C++ include, with my biased opinions: (click
 to expand)
 
 ** Documentation
-*** Option Types
+*** Option Syntax & Types
     The options, or flags, can be at the first level or at the sub command levels.
     They take on the following charastics:
     - -a            (single character)
@@ -77,6 +77,7 @@ to expand)
       - --color grey  (alternative version with value)
       - --color=green (alternate way to do the alternative value
     - --str="single string with spaces"
+    - -ac yellow (multiple single character options, last one has its own value)
     
 **** type::base
 **** type::numeric

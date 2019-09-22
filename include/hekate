@@ -201,9 +201,13 @@ namespace hekate {
       return m_scmds.find(token) != m_scmds.end();
     }
 
-    virtual void parse_opt(std::string flag) {
-      std::cout << "OPT: " << flag << '\n';
-      m_sopts
+    /// may have an additional token or two to process here.
+    virtual void parse_opt(main_args_iterator_t &it,
+                           main_args_iterator_t &it_end) {
+      std::cout << "OPT: " << *it << '\n';
+      for (const auto& op : m_sopts) {
+      }
+      ++it;
     }
 
     virtual void parse_parameter(std::string parameter) {
@@ -227,8 +231,7 @@ namespace hekate {
       m_visited = true;
       while (it != it_end) {
         if (is_flag(*it)) {
-          parse_opt(*it);
-          ++it;
+          parse_opt(it, it_end);
         } else if (is_command(*it)) {
           parse_command(it, it_end);
         } else if (is_parameter(*it)) {
