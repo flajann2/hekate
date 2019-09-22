@@ -11,6 +11,7 @@
 #include <utility>
 #include <variant>
 #include <vector>
+#include <deque>
 
 /// Hekate Library includes
 /// Order is important for combiner script
@@ -55,13 +56,14 @@ namespace hekate {
   class cli;
   class cmd;
 
+  using token_t = std::string;
   using description_t = std::string;
-  using main_args_t = std::vector<std::string>;
-  using param_list_t = std::vector<std::string>;
+  using main_args_t = std::deque<token_t>;
+  using param_list_t = std::deque<token_t>;
   using main_args_iterator_t = main_args_t::const_iterator;
 
-  using optional_args_t = std::vector<std::string>;
-  using optional_list_t = std::vector<std::string>;
+  using optional_args_t = std::deque<token_t>;
+  using optional_list_t = std::deque<token_t>;
 
   using nested_f = std::function<void(cmd &)>;
   using command_f = std::function<void(cmd &)>;
@@ -81,18 +83,15 @@ namespace hekate {
     return s;
   }
 
-  // Syntax
-  using key_t = std::string;
-
   // syntax_ is a designator for syntax type.
   /// opt uses visitor pattern to work here
-  using syntax_opt_t = std::vector<std::function<bool(cmd &cmd, key_t tok)>>;
+  using syntax_opt_t = std::vector<std::function<bool(cmd &cmd, token_t tok)>>;
   /// param uses the visitor pattern
-  using syntax_param_t = std::vector<std::function<void(cmd &cmd, key_t tok)>>;
+  using syntax_param_t = std::vector<std::function<void(cmd &cmd, token_t tok)>>;
   /// Alas, forward refercing issues with map necessitates this!!!!
   using cmd_ptr_t = std::shared_ptr<cmd>;
   /// subcommands in actuality
-  using syntax_cmd_t = std::unordered_map<key_t, cmd_ptr_t>;
+  using syntax_cmd_t = std::unordered_map<token_t, cmd_ptr_t>;
 
   /** The hetake base class
    */
@@ -197,7 +196,7 @@ namespace hekate {
         : m_name(c.m_name), m_fcmd(c.m_fcmd), m_frun(c.m_frun),
           m_sopts(c.m_sopts), m_scmds(c.m_scmds), m_sparams(c.m_sparams) {}
 
-    virtual bool is_command(const key_t &token) override {
+    virtual bool is_command(const token_t &token) override {
       return m_scmds.find(token) != m_scmds.end();
     }
 

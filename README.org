@@ -24,6 +24,7 @@
       - [[#2019-06-15----re-reading-my-code][2019-06-15 -- Re-reading my code]]
       - [[#2019-06-16----and-so-we-continue][2019-06-16 -- And so we continue]]
       - [[#2019-09-14----ah-so-more-precious-time-to-work-on-this][2019-09-14 -- Ah, so more precious time to work on this!]]
+      - [[#2019-09-23----we-have-decided-to-use-deque-insted-of-vector-when-handling-tokens][2019-09-23 -- We have decided to use deque insted of vector when handling tokens!]]
 
 ** Synopsis
    *Hekate* provides all the features you expect in a
@@ -278,3 +279,4 @@ to expand)
 
 
 
+**** 2019-09-23 -- We have decided to use deque insted of vector when handling tokens!
