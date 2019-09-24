@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cctype>
+#include <deque>
 #include <functional>
 #include <iostream>
 #include <limits>
@@ -11,7 +12,6 @@
 #include <utility>
 #include <variant>
 #include <vector>
-#include <deque>
 
 /// Hekate Library includes
 /// Order is important for combiner script
@@ -21,12 +21,7 @@ namespace hekate {
   constexpr int unbounded = -1;
   const std::string nullstr = "";
 
-  /// opt types:
-  ///   integer, integer_arr,
-  ///   floating, floating_arr,
-  ///   string, string_arr,
-  ///   flag
-  ///   unitary
+  /// optional types
   enum class type {
     integer,
     integer_arr,
@@ -37,16 +32,16 @@ namespace hekate {
     flag,
     unitary
   };
-  
+
   /// Variant type for the optionals
   using optional_variant_t =
       std::variant<int, std::vector<int>, double, std::vector<double>,
                    std::string, std::vector<std::string>, bool>;
 
   // Helper functions for the variants.
-  template<class... Ts> struct vhandlers : Ts... { using Ts::operator()...; };
-  template<class... Ts> vhandlers(Ts...) -> vhandlers<Ts...>;
-  
+  template <class... Ts> struct vhandlers : Ts... { using Ts::operator()...; };
+  template <class... Ts> vhandlers(Ts...)->vhandlers<Ts...>;
+
   /// qualifiers:
   ///   required
   ///   optional (the default)
@@ -56,14 +51,56 @@ namespace hekate {
   class cli;
   class cmd;
 
-  using token_t = std::string;
-  using description_t = std::string;
-  using main_args_t = std::deque<token_t>;
-  using param_list_t = std::deque<token_t>;
-  using main_args_iterator_t = main_args_t::const_iterator;
+  /// Strong Typing construct.
+  /// We try to make this as minimal as possible, so that
+  /// the code reads well.
+  template <typename T, typename PhantomType> struct strong_type {
+    T m;
+    strong_type() {}
+    strong_type(T &t) : m(t) {}
+    strong_type(T &&t) : m(std::move(t)) {}
 
-  using optional_args_t = std::deque<token_t>;
-  using optional_list_t = std::deque<token_t>;
+    template <typename Primitive> strong_type(Primitive p) : m(p) {}
+    bool operator==(const T &other) { return other.m == m; }
+  };
+
+  /// Phantom Typees
+  namespace pt {
+    struct token {};
+    struct description {};
+    struct main_args {};
+    struct param_list {};
+    struct optional_args {};
+    struct optional_list {};
+  } // namespace pt
+
+  // We have to provide a specilaztion for hashing the following
+  // so we will go in and out o f hekate scope.
+  // Remain calm and enjoy the ride.
+  using token_t = strong_type<std::string, pt::token>;
+} // namespace hekate
+
+// We have to reopen std to provide a specialization for token_t
+namespace std {
+  using namespace hekate;
+
+  template <> struct hash<token_t> {
+    typedef token_t argument_type;
+    typedef std::size_t result_type;
+    result_type operator()(argument_type const &s) const noexcept {
+      result_type const h(std::hash<std::string>{}(s.m));
+      return h;
+    }
+  };
+} // namespace std
+
+// Reenting hetake. Nothing to see here. Move it along...
+namespace hekate {
+  using description_t = strong_type<std::string, pt::description>;
+  using main_args_t = strong_type<std::deque<token_t>, pt::main_args>;
+  using param_list_t = strong_type<std::deque<token_t>, pt::param_list>;
+  using optional_args_t = strong_type<std::deque<token_t>, pt::optional_args>;
+  using optional_list_t = strong_type<std::deque<token_t>, pt::optional_list>;
 
   using nested_f = std::function<void(cmd &)>;
   using command_f = std::function<void(cmd &)>;
@@ -87,7 +124,8 @@ namespace hekate {
   /// opt uses visitor pattern to work here
   using syntax_opt_t = std::vector<std::function<bool(cmd &cmd, token_t tok)>>;
   /// param uses the visitor pattern
-  using syntax_param_t = std::vector<std::function<void(cmd &cmd, token_t tok)>>;
+  using syntax_param_t =
+      std::vector<std::function<void(cmd &cmd, token_t tok)>>;
   /// Alas, forward refercing issues with map necessitates this!!!!
   using cmd_ptr_t = std::shared_ptr<cmd>;
   /// subcommands in actuality
@@ -99,15 +137,15 @@ namespace hekate {
   protected:
     description_t m_description;
 
-    /// does its parsing and returns the new position of the iterator.
-    virtual main_args_iterator_t parse(main_args_iterator_t it,
-                                       main_args_iterator_t it_end){};
+    base() : m_description(nullstr) {}
+    base(std::string desc) : m_description(desc) {}
 
-    virtual bool is_flag(const std::string &token) { return token[0] == '-'; }
+    virtual main_args_t &parse(main_args_t &args){};
+    virtual bool is_flag(const token_t &token) { return token.m[0] == '-'; }
 
-    virtual bool is_command(const std::string &token) { return false; }
+    virtual bool is_command(const token_t &token) { return false; }
 
-    virtual bool is_parameter(const std::string &token) {
+    virtual bool is_parameter(const token_t &token) {
       return !is_flag(token) && !is_command(token);
     }
   };
@@ -120,10 +158,10 @@ namespace hekate {
   public:
     template <typename... Args> opt(const Args &... args) {
       optional_args_t oargs = {args...};
-      
-      for (const auto &oa : oargs) {
+
+      for (const auto &oa : oargs.m) {
         if (is_flag(oa)) {
-          m_alternatives.push_back(oa);
+          m_alternatives.m.push_back(oa);
         } else { // assume description!
           // TODO: Note we don't currently fail multiple descriptions, if given.
           // TODO: WE SHOULD!
@@ -143,11 +181,11 @@ namespace hekate {
   };
 
   /// Parameter
-  /// 
+  ///
   template <type T, int min = 0, int max = std::numeric_limits<int>::max()>
   class param : public base {
     param_list_t m_params;
-    
+
   public:
     explicit param(const description_t &description) {
       m_description = description;
@@ -182,9 +220,8 @@ namespace hekate {
     const std::string m_name;
 
     cmd(const std::string &name, nested_f fcmd, command_f frun = nullptr,
-        description_t description = nullstr)
-        : m_name(name), m_fcmd(fcmd), m_frun(frun) {
-      m_description = description;
+        std::string description = nullstr)
+        : m_name(name), m_fcmd(fcmd), m_frun(frun), base(description) {
       m_fcmd(*this);
     }
     cmd() : m_name("<cmd>") {}
@@ -201,10 +238,9 @@ namespace hekate {
     }
 
     /// may have an additional token or two to process here.
-    virtual void parse_opt(main_args_iterator_t &it,
-                           main_args_iterator_t &it_end) {
+    virtual void parse_opt(main_args_t &args) {
       std::cout << "OPT: " << *it << '\n';
-      for (const auto& op : m_sopts) {
+      for (const auto &op : m_sopts) {
       }
       ++it;
     }
@@ -213,8 +249,7 @@ namespace hekate {
       std::cout << "PARM: " << parameter << '\n';
     }
 
-    virtual void parse_command(main_args_iterator_t &it,
-                               main_args_iterator_t &it_end) {
+    virtual void parse_command(main_args_t &args) {
       std::cout << "CMD: " << *it << '\n';
       auto local_it = it++;
       m_scmds[*local_it]->parse(it, it_end);
@@ -225,8 +260,7 @@ namespace hekate {
      * parameters and flags are consumed, and commands are given to the
      * matching child cmd.
      */
-    main_args_iterator_t parse(main_args_iterator_t it,
-                               main_args_iterator_t it_end) {
+    main_args_t &parse(main_args_t &args) {
       m_visited = true;
       while (it != it_end) {
         if (is_flag(*it)) {
@@ -242,7 +276,7 @@ namespace hekate {
           throw it;
         }
       }
-      return it;
+      return args;
     }
 
     /// Note that this is a synchronous call, as it will not return
