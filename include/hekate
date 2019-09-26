@@ -239,10 +239,9 @@ namespace hekate {
 
     /// may have an additional token or two to process here.
     virtual void parse_opt(main_args_t &args) {
-      std::cout << "OPT: " << *it << '\n';
+      std::cout << "OPT: " << args.m.begin()->m << '\n';
       for (const auto &op : m_sopts) {
       }
-      ++it;
     }
 
     virtual void parse_parameter(std::string parameter) {
@@ -250,7 +249,7 @@ namespace hekate {
     }
 
     virtual void parse_command(main_args_t &args) {
-      std::cout << "CMD: " << *it << '\n';
+      std::cout << "CMD: " << args.m.begin()->m << '\n';
       auto local_it = it++;
       m_scmds[*local_it]->parse(it, it_end);
     }
@@ -344,7 +343,7 @@ namespace hekate {
 
     /// this parses the incoming arguments from command-line
     int operator()(const main_args_t &args, bool do_callbacks = true) {
-      for (auto s : args) {
+      for (auto s : args.m) {
         std::cout << "-> " << s << '\n';
       }
       parse(args.begin(), args.end());
