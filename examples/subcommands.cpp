@@ -46,6 +46,7 @@ int main(int argc, char **argv) {
   // main_args_t a1{"-a", "-f", "walk", "--stride", "through", "--speed", "10"};
   // main_args_t a2{"-a", "-f", "fly", "--fast", "through", "--speed", "200"};
   main_args_t a3{"-a", "-f", "fly", "--fast", "through", "--speed=500"};
+  main_args_t a4{"-af",      "fly", "--fast", "through", "--speed=500"};
 
   //  cout << "*** a1 main_args_t hard coded:" << endl;
   //  argline(a1);
@@ -55,6 +56,9 @@ int main(int argc, char **argv) {
   //
   cout << endl << "*** a3 main_args_t hard coded:" << endl;
   argline(a3);
+
+  cout << endl << "*** a4 main_args_t hard coded:" << endl;
+  argline(a4);
 
   cout << endl << endl << "*** from cli parms:" << endl;
   return argline(argc, argv);

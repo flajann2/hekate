@@ -97,6 +97,18 @@ namespace std {
 // Reenting hetake. Nothing to see here. Move it along...
 namespace hekate {
   using description_t = strong_type<std::string, pt::description>;
+
+  /**
+   * We make heavy use of deque here, and we have the following FIFO conventions:
+   * push_back() pushes new tokens into the FIFO
+   * pop_front() pops the next token to be consumed out of the FIFO.
+   * push_front() may be used to "normalize" equivalent token sequences,
+   *              such as "--count 23" and "--count=23"
+   *              and "-c23" and "-c 23", and also dealing with
+   *              combined single character boolean switches, such as
+   *              "-abxwd" into "-a -b -x -w -d".
+   */
+  
   using main_args_t = strong_type<std::deque<token_t>, pt::main_args>;
   using param_list_t = strong_type<std::deque<token_t>, pt::param_list>;
   using optional_args_t = strong_type<std::deque<token_t>, pt::optional_args>;
@@ -249,8 +261,8 @@ namespace hekate {
     }
 
     virtual void parse_command(main_args_t &args) {
-      std::cout << "CMD: " << args.m.begin()->m << '\n';
-      auto local_it = it++;
+      auto tcmd = args.pop_front();
+      std::cout << "CMD: " << tcmd << '\n';
       m_scmds[*local_it]->parse(it, it_end);
     }
 
