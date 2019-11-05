@@ -218,6 +218,7 @@ namespace hekate {
     friend std::ostream &operator<<(std::ostream &os, cmd const &c);
 
   protected:
+    /// Part of the DSL, nestable commands.
     nested_f m_fcmd;
     /// command that will be executed iff there are no errors
     /// in the options and parameters for this cmd.
@@ -256,14 +257,15 @@ namespace hekate {
       }
     }
 
-    virtual void parse_parameter(std::string parameter) {
-      std::cout << "PARM: " << parameter << '\n';
+    virtual void parse_parameter(main_args_t &args) {
+      std::cout << "PARM: " << args.m.front() << '\n';
     }
 
     virtual void parse_command(main_args_t &args) {
-      auto tcmd = args.pop_front();
-      std::cout << "CMD: " << tcmd << '\n';
-      m_scmds[*local_it]->parse(it, it_end);
+      auto tcmd = args.m.front();
+      args.m.pop_front();
+      std::cout << "CMD: " << tcmd.m << '\n';
+      m_scmds[tcmd]->parse(args);
     }
 
     /**
@@ -273,18 +275,19 @@ namespace hekate {
      */
     main_args_t &parse(main_args_t &args) {
       m_visited = true;
-      while (it != it_end) {
-        if (is_flag(*it)) {
-          parse_opt(it, it_end);
-        } else if (is_command(*it)) {
-          parse_command(it, it_end);
-        } else if (is_parameter(*it)) {
-          parse_parameter(*it);
-          ++it;
+      while (!args.m.empty()) {
+        const auto& next_token = args.m.front();
+        
+        if (is_flag(next_token)) {
+          parse_opt(args);
+        } else if (is_command(next_token)) {
+          parse_command(args);
+        } else if (is_parameter(next_token)) {
+          parse_parameter(args);
         } else { // Failure to match anything in the CLI template!!!
           // TODO: Add error handling in here! And a printout of
           // TODO: the help.
-          throw it;
+          throw next_token;
         }
       }
       return args;
@@ -354,11 +357,11 @@ namespace hekate {
     }
 
     /// this parses the incoming arguments from command-line
-    int operator()(const main_args_t &args, bool do_callbacks = true) {
+    int operator()(main_args_t &args, bool do_callbacks = true) {
       for (auto s : args.m) {
-        std::cout << "-> " << s << '\n';
+        std::cout << "-> " << s.m << '\n';
       }
-      parse(args.begin(), args.end());
+      parse(args);
       if (do_callbacks) {
         invoke_callbacks();
       }
