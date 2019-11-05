@@ -61,7 +61,8 @@ namespace hekate {
     strong_type(T &&t) : m(std::move(t)) {}
 
     template <typename Primitive> strong_type(Primitive p) : m(p) {}
-    bool operator==(const T &other) { return other.m == m; }
+
+    bool operator==(const T &other) const { return other.m == m; }
   };
 
   /// Phantom Typees
@@ -94,21 +95,20 @@ namespace std {
   };
 } // namespace std
 
-// Reenting hetake. Nothing to see here. Move it along...
+// Reenting hekate. Nothing to see here. Move it along...
 namespace hekate {
   using description_t = strong_type<std::string, pt::description>;
 
   /**
-   * We make heavy use of deque here, and we have the following FIFO conventions:
-   * push_back() pushes new tokens into the FIFO
-   * pop_front() pops the next token to be consumed out of the FIFO.
-   * push_front() may be used to "normalize" equivalent token sequences,
-   *              such as "--count 23" and "--count=23"
-   *              and "-c23" and "-c 23", and also dealing with
-   *              combined single character boolean switches, such as
+   * We make heavy use of deque here, and we have the following FIFO
+   * conventions: push_back() pushes new tokens into the FIFO pop_front() pops
+   * the next token to be consumed out of the FIFO. push_front() may be used to
+   * "normalize" equivalent token sequences, such as "--count 23" and
+   * "--count=23" and "-c23" and "-c 23", and also dealing with combined single
+   * character boolean switches, such as
    *              "-abxwd" into "-a -b -x -w -d".
    */
-  
+
   using main_args_t = strong_type<std::deque<token_t>, pt::main_args>;
   using param_list_t = strong_type<std::deque<token_t>, pt::param_list>;
   using optional_args_t = strong_type<std::deque<token_t>, pt::optional_args>;
@@ -143,7 +143,7 @@ namespace hekate {
   /// subcommands in actuality
   using syntax_cmd_t = std::unordered_map<token_t, cmd_ptr_t>;
 
-  /** The hetake base class
+  /** The hekate base class
    */
   class base {
   protected:
@@ -258,7 +258,7 @@ namespace hekate {
     }
 
     virtual void parse_parameter(main_args_t &args) {
-      std::cout << "PARM: " << args.m.front() << '\n';
+      std::cout << "PARM: " << args.m.front().m << '\n';
     }
 
     virtual void parse_command(main_args_t &args) {
@@ -276,8 +276,8 @@ namespace hekate {
     main_args_t &parse(main_args_t &args) {
       m_visited = true;
       while (!args.m.empty()) {
-        const auto& next_token = args.m.front();
-        
+        const auto &next_token = args.m.front();
+
         if (is_flag(next_token)) {
           parse_opt(args);
         } else if (is_command(next_token)) {
@@ -351,7 +351,7 @@ namespace hekate {
 
       progname = argv[0];
       for (int i = 1; i < argc; ++i) {
-        args.push_back(argv[i]);
+        args.m.push_back(argv[i]);
       }
       return (*this)(args);
     }
