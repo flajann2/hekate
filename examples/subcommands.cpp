@@ -6,21 +6,21 @@ using namespace std;
 
 int main(int argc, char **argv) {
   cli argline;
-  argline << opt<type::flag>("-a", "--all", "Newton's Inspiration")
-          << opt<type::flag>("-b", "--beta_mode", "For testing")
-          << opt<type::flag>("-f", "Force the situation")
-          << opt<type::integer>("-n", "--count", "How many times to repeat")
-          << opt<type::string>("-s", "--string", "Just an ordinary string")
-          << param<type::string, 0, 1>("Label to use")
+  argline << opt<ilk::flag>("-a", "--all", "Newton's Inspiration")
+          << opt<ilk::flag>("-b", "--beta_mode", "For testing")
+          << opt<ilk::flag>("-f", "Force the situation")
+          << opt<ilk::integer>("-n", "--count", "How many times to repeat")
+          << opt<ilk::string>("-s", "--string", "Just an ordinary string")
+          << param<ilk::string, 0, 1>("Label to use")
 
           << cmd(
                  "walk",
                  [](auto &c) {
-                   c << opt<type::integer>("--stride", "")
+                   c << opt<ilk::integer>("--stride", "")
                      << cmd("through", [](auto &c) {
-                          c << opt<type::unitary>("--speed",
+                          c << opt<ilk::unitary>("--speed",
                                                   "Speed of movement")
-                            << param<type::string, 1>("Comments");
+                            << param<ilk::string, 1>("Comments");
                         });
                  },
                  nullptr, "You have to walk before you can run")
@@ -28,11 +28,11 @@ int main(int argc, char **argv) {
           << cmd(
                  "fly",
                  [](auto &c) {
-                   c << opt<type::flag>("--fast", "Rapid movement")
+                   c << opt<ilk::flag>("--fast", "Rapid movement")
                      << cmd("through", [](auto &c) {
-                          c << opt<type::unitary>("--speed",
+                          c << opt<ilk::unitary>("--speed",
                                                   "Speed of movement")
-                            << param<type::string, 1>("Comments");
+                            << param<ilk::string, 1>("Comments");
                         });
                  },
                  [](auto &cob) {
