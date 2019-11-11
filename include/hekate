@@ -63,6 +63,7 @@ namespace hekate {
     template <typename Primitive> strong_type(Primitive p) : m(p) {}
 
     bool operator==(const T &other) const { return other.m == m; }
+    bool operator==(const T &&other) const { return other.m == m; }
   };
 
   /// Phantom Typees
@@ -187,7 +188,7 @@ namespace hekate {
     qual get_qual() { return Q; }
 
     // visitor
-    bool operator()(cmd &cmd, std::string tok) {
+    bool operator()(cmd &cmd, std::string &tok) {
       std::cout << "** opt:" << tok;
     }
   };
@@ -199,10 +200,11 @@ namespace hekate {
     param_list_t m_params;
 
   public:
+    template <typename... Args>
     explicit param(const description_t &description) {
       m_description = description;
     }
-    void operator()(cmd &cmd, std::string tok) {}
+    void operator()(cmd &cmd, std::string &tok) {}
 
     ilk get_ilk() { return T; }
     int get_min() { return min; }
@@ -273,7 +275,7 @@ namespace hekate {
      * parameters and flags are consumed, and commands are given to the
      * matching child cmd.
      */
-    main_args_t &parse(main_args_t &args) {
+    main_args_t &parse(main_args_t &args) override {
       m_visited = true;
       while (!args.m.empty()) {
         const auto &next_token = args.m.front();
@@ -306,13 +308,13 @@ namespace hekate {
 
     /// opt DSL
     template <ilk T, qual Q> cmd &operator<<(opt<T, Q> &&o) {
-      m_sopts.emplace_back(std::function<bool(cmd & c, std::string tok)>(o));
+      m_sopts.emplace_back(std::function<bool(cmd &c, token_t &tok)>(o));
       return *this;
     }
 
     /// param DSL
     template <ilk T, int... NX> cmd &operator<<(param<T, NX...> &&p) {
-      m_sparams.emplace_back(std::function<void(cmd &, std::string tok)>(p));
+      m_sparams.emplace_back(std::function<void(cmd &c, token_t &tok)>(p));
       return *this;
     }
 

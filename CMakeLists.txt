@@ -7,9 +7,10 @@ project(hekate  LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-option(ENABLE_TESTS "Enable testing" OFF)
-option(ENABLE_EXAMPLES "Enable examples" ON)
-option(ENABLE_DOCS "Enable documentation" OFF)
+if (ENABLE_CLANG)
+  set(CMAKE_C_COMPILER   "/usr/bin/clang" CACHE string "clang compiler" FORCE)
+  set(CMAKE_CXX_COMPILER "/usr/bin/clang++" CACHE string "clang compiler" FORCE)
+endif()
 
 include(CTest)
 

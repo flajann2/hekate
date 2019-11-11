@@ -43,17 +43,17 @@ int main(int argc, char **argv) {
                cout << "MAIN RUUNNABLE invoked" << endl;
              };
 
-  // main_args_t a1{"-a", "-f", "walk", "--stride", "through", "--speed", "10"};
-  // main_args_t a2{"-a", "-f", "fly", "--fast", "through", "--speed", "200"};
-  main_args_t a3{"-a", "-f", "fly", "--fast", "through", "--speed=500"};
-  main_args_t a4{"-af",      "fly", "--fast", "through", "--speed=500"};
+  main_args_t a1{{"-a", "-f", "walk", "--stride", "through", "--speed", "10"}};
+  main_args_t a2{{"-a", "-f", "fly", "--fast", "through", "--speed", "200"}};
+  main_args_t a3{{"-a", "-f", "fly", "--fast", "through", "--speed=500"}};
+  main_args_t a4{{"-af",      "fly", "--fast", "through", "--speed=500"}};
 
-  //  cout << "*** a1 main_args_t hard coded:" << endl;
-  //  argline(a1);
-  //
-  //  cout << endl << "*** a2 main_args_t hard coded:" << endl;
-  //  argline(a2);
-  //
+  cout << "*** a1 main_args_t hard coded:" << endl;
+  argline(a1);
+  
+  cout << endl << "*** a2 main_args_t hard coded:" << endl;
+  argline(a2);
+
   cout << endl << "*** a3 main_args_t hard coded:" << endl;
   argline(a3);
 
