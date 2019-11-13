@@ -151,7 +151,10 @@ namespace hekate {
     description_t m_description;
 
     base() : m_description(nullstr) {}
-    base(std::string desc) : m_description(desc) {}
+    //base(std::string &desc) : m_description(desc) {}
+    //base(std::string &&desc) : m_description(std::move(desc)) {}
+    base(const description_t &desc) : m_description(desc) {}
+    base(const description_t &&desc) : m_description(std::move(desc)) {}
 
     virtual main_args_t &parse(main_args_t &args){};
     virtual bool is_flag(const token_t &token) { return token.m[0] == '-'; }
@@ -179,7 +182,7 @@ namespace hekate {
           // TODO: Note we don't currently fail multiple descriptions, if given.
           // TODO: WE SHOULD!
           // TODO: or at least concatenate them.
-          m_description = oa;
+          m_description.m = oa.m;
         }
       }
     }
@@ -201,8 +204,11 @@ namespace hekate {
 
   public:
     template <typename... Args>
-    explicit param(const description_t &description) {
-      m_description = description;
+    explicit param(const description_t &description) : base(description) {
+      //m_description = description;
+    }
+    explicit param(const description_t &&description) : base(description) {
+      //m_description = description;
     }
     void operator()(cmd &cmd, std::string &tok) {}
 
@@ -314,7 +320,7 @@ namespace hekate {
 
     /// param DSL
     template <ilk T, int... NX> cmd &operator<<(param<T, NX...> &&p) {
-      m_sparams.emplace_back(std::function<void(cmd &c, token_t &tok)>(p));
+      m_sparams.emplace_back(std::function/<void(cmd &c, token_t &tok)>(p));
       return *this;
     }
 
