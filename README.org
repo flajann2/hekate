@@ -226,7 +226,7 @@ to expand)
          };
      };    
    #+end_src
-** Personal Notes
+** TODO Personal Notes
    These notes are for me personally, and are not garenteed to be "up to date"
    or have any specifc value for the users of Hekate. They will most likely
    be removed on the final release.
