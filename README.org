@@ -2,13 +2,13 @@
   - [[#synopsis][Synopsis]]
     - [[#why-write-another-cli-parser][Why write another CLI parser?]]
   - [[#documentation][Documentation]]
-    - [[#option-syntax--types][Option Syntax & Types]]
-      - [[#typebase][type::base]]
-      - [[#typenumeric][type::numeric]]
-      - [[#typestring][type::string]]
-      - [[#typeflag][type::flag]]
+    - [[#option-syntax--types-ilks][Option Syntax & Types (Ilks)]]
+      - [[#ilkbase][ilk::base]]
+      - [[#ilknumeric][ilk::numeric]]
+      - [[#ilkstring][ilk::string]]
+      - [[#ilkflag][ilk::flag]]
         - [[#note-well][NOTE WELL]]
-      - [[#typeunitary][type::unitary]]
+      - [[#ilkunitary][ilk::unitary]]
   - [[#the-gory-details][The Gory Details]]
     - [[#cmd-and-the-naked-expression][cmd and the naked-expression]]
     - [[#bnf-representation-for-the-command-line-parser][BNF Representation for the Command-Line Parser]]
@@ -26,6 +26,7 @@
       - [[#2019-09-14----ah-so-more-precious-time-to-work-on-this][2019-09-14 -- Ah, so more precious time to work on this!]]
       - [[#2019-09-23----we-have-decided-to-use-deque-insted-of-vector-when-handling-tokens][2019-09-23 -- We have decided to use deque insted of vector when handling tokens!]]
       - [[#2019-11-05----poland-development][2019-11-05 -- Poland development]]
+      - [[#2019-11-17----deciding-how-we-want-to-handle-parameters][2019-11-17 -- Deciding how we want to handle parameters]]
 
 ** Synopsis
    *Hekate* provides all the features you expect in a
@@ -70,7 +71,7 @@ The major CLI parsers for C++ include, with my biased opinions: (click
 to expand)
 
 ** Documentation
-*** Option Syntax & Types
+*** Option Syntax & Types (Ilks)
     The options, or flags, can be at the first level or at the sub command levels.
     They take on the following charastics:
     - -a            (single character)
@@ -80,19 +81,22 @@ to expand)
       - --color=green (alternate way to do the alternative value
     - --str="single string with spaces"
     - -ac yellow (multiple single character options, last one has its own value)
-    
-**** type::base
-**** type::numeric
+     
+    We designate the type as 'ilk', to avoid possible issues with future reserved
+    words and possible clashes with the std (and other) libraries.
+
+**** ilk::base
+**** ilk::numeric
      Floating point number.
 
-**** type::string
-**** type::flag
+**** ilk::string
+**** ilk::flag
      Boolean, false if not given, true if it is.
 ***** NOTE WELL
       We want to emulate Thor semantics here, so later
       we will allow for a --no-xxxx construction
 
-**** type::unitary
+**** ilk::unitary
      A numeric that describes a unit of measure.
 
 ** The Gory Details
@@ -284,4 +288,12 @@ to expand)
 **** 2019-11-05 -- Poland development 
      We are working on this while on holiday in Poland. I will try to wrap
      this up here, so I can get on with ZuseNEAT, etc.
+
+**** 2019-11-17 -- Deciding how we want to handle parameters
+     We origionally envisioned parameter types to be typable (strings, ints, etc.)
+     but wonder if we would ever have any use cases other than strings. Besides,
+     we can specify types easily enough with opts. 
+
+     So for now, parameters can only be strings. options have typing array modifiers
+     to handle that special use case. Let's do the KISS with parameters.
 
