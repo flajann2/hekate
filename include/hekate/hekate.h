@@ -11,6 +11,7 @@
 #include <utility>
 #include <variant>
 #include <vector>
+#include <algorithm>
 
 /// Hekate Library includes
 /// Order is important for combiner script
