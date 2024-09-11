@@ -28,6 +28,7 @@ include(FeatureSummary)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
 
 if (ENABLE_DOCS)

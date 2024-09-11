@@ -5,6 +5,7 @@ include_directories(
 
 function(add_cli_bin T)
     add_executable(${T} ${ARGN} ${HEKATE_headers})
+    target_include_directories(${T} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
     set_target_properties(
          ${T} PROPERTIES
          FOLDER "Examples"
