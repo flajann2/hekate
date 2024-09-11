@@ -14,9 +14,10 @@ set(CMAKE_MODULE_PATH
   ${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules)
 
 set(INCLUDE_PATH
-  "${CMAKE_CURRENT_SOURCE_DIR}/include"
-  )
+  "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
+message(STATUS "hetake include ${INCLUDE_PATH}")
+  
 # Define GNU standard installation directories
 include(GNUInstallDirs)
 
