@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.10)
 project(hekate  LANGUAGES CXX)
 
 option(ENABLE_TESTS "Enable testing" OFF)
-option(ENABLE_EXAMPLES "Enable examples" ON)
+option(ENABLE_EXAMPLES "Enable examples" OFF)
 option(ENABLE_DOCS "Enable documentation" OFF)
 
 include(CTest)
