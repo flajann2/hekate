@@ -174,7 +174,7 @@ namespace hekate {
      * matching child cmd.
      */
     main_args_iterator_t parse(main_args_iterator_t it,
-                               main_args_iterator_t it_end) {
+                               main_args_iterator_t it_end) override {
       m_visited = true;
       while (it != it_end) {
         if (is_flag(*it)) {
